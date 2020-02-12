@@ -1,0 +1,23 @@
+@margintop: 60px;
+@homeFontSize: 18px;
+@homeFontColor: #999999;
+@media screen and (max-width: 900px) {
+  .homeRight {
+    display: none !important;
+  }
+}
+#homeContent {
+  display: flex;
+  width: 100%;
+  .homeLeft {
+    background-color: #fff;
+    min-height: 1100px;
+    margin-top: @margintop;
+    margin-right: 12px;
+    flex: 3;
+  }
+  .homeRight {
+    margin-top: @margintop;
+    flex: 1;
+  }
+}

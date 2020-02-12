@@ -1,0 +1,46 @@
+@navHeight: 48px;
+@navFontSize: 18px;
+@navFontColor: #999999;
+
+@media screen and (max-width: 700px) {
+  .navControl {
+    display: none !important;
+  }
+}
+
+#homeNav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: @navHeight;
+  background-color: #fff;
+  z-index: 999;
+  .navContent {
+    height: @navHeight;
+    display: flex;
+    .navIcon {
+      flex: 1;
+      display: inline;
+      img {
+        height: @navHeight;
+      }
+    }
+    .navControl {
+      display: flex;
+      flex: 1;
+      height: @navHeight;
+      .navItem {
+        flex: 1;
+        font-size: @navFontSize;
+        line-height: @navHeight;
+        color: @navFontColor;
+        font-weight: normal;
+        cursor: pointer;
+      }
+      .navItem:hover {
+        color: #61dafb;
+      }
+    }
+  }
+}
