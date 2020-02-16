@@ -11,6 +11,7 @@ interface Props {
   title: string
   IconTitle: {
     tag: string
+    tagColor: string
     calendar: string
     folder: string
     fire: number
@@ -30,7 +31,9 @@ export default class ContentRender extends Component<Props> {
         </Link>
         <div className="articleTitleIcon gray">
           <span>
-            <Tag color="#f50">{this.props.IconTitle.tag}</Tag>
+            <Tag color={this.props.IconTitle.tagColor}>
+              {this.props.IconTitle.tag}
+            </Tag>
           </span>
           <span>
             <Icon type="calendar" />

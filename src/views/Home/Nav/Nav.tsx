@@ -34,7 +34,7 @@ export default class Nav extends Component<{ login: () => void }> {
             </div>
             <div className="navItem" onClick={this.props.login}>
               <span>
-                <Icon type="user" /> &nbsp;登录
+                <Icon type="user" /> &nbsp;登录(暂不开放)
               </span>
             </div>
           </div>

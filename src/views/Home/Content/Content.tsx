@@ -1,69 +1,238 @@
-import React, { Component, createRef } from 'react'
+import React, { createRef, PureComponent } from 'react'
 import { Route, Redirect, Switch, RouteComponentProps } from 'react-router-dom'
 
 //@components
-import { ContentRender } from '../../../components'
+import { ContentRender, Loading, ScrollToTop } from '../../../components'
+import NotFound from '../../NotFound/NotFound'
 import Article from './Article/Article'
+import Foot from '../Foot/Foot'
 //@antd
-import { Empty } from 'antd'
+import { Pagination } from 'antd'
+
+//@network
+import axios from '../../../netWork'
 
 //@interface
-interface Props extends RouteComponentProps {}
-interface State {}
 
-const obj = {
-  title: '文章标题',
+interface Props extends RouteComponentProps {}
+
+interface dataItem {
+  // 数据单项接口
+  title: string
   IconTitle: {
-    tag: '小编推荐',
-    calendar: '2020/02/10',
-    folder: 'JavaScript',
-    fire: 15000
-  },
+    tag: string
+    tagColor: string
+    calendar: string
+    folder: string
+    fire: number
+  }
   content: {
-    details:
-      '跟着我学一年，掌握程序的学习方法。 也许你刚步入IT行业，也许你遇到了成长瓶颈，也许你不知道该学习什么知识，也许你不会融入团队，也许...........有些时候你陷入彷徨。 你需要一个强力的队友，你需要一个资深老手，你需要一个随时可以帮助你的人，你更需要一个陪你加速前行的。 我在这个行业走了12年，从后端、前端到移动端都从事过，从中走了很多坑，但我有一套适合程序员的学习方法。 如果你愿意，我将带着你在这个程序行业加速奔跑。分享我学习的方法，所学的内容和一切我的资料。 你遇到的职业问题，我也会第一时间给你解答',
-    href: '/home/article'
+    details: string
+    href: string
   }
 }
+
+interface State {
+  // state约束
+  data: dataItem[]
+  progress: {
+    percent: number
+    status: 'active' | 'normal' | 'success' | 'exception' | undefined
+  }
+}
+
 //@class
-export default class Content extends Component<Props, State> {
-  empty: React.RefObject<HTMLDivElement>
+export default class Content extends PureComponent<Props, State> {
+  timeOut: any
+  loading: React.RefObject<HTMLDivElement>
   constructor(props: Props) {
     super(props)
-    this.empty = createRef()
+    this.timeOut = null
+    this.loading = createRef()
+    this.state = {
+      data: [
+        {
+          title: 'default',
+          IconTitle: {
+            tag: 'default',
+            tagColor: 'default',
+            calendar: 'default',
+            folder: 'default',
+            fire: 0
+          },
+          content: {
+            details: 'default',
+            href: 'default'
+          }
+        }
+      ],
+      progress: {
+        percent: 5,
+        status: 'active'
+      }
+    }
   }
   render() {
     return (
       <>
-        <Switch>
-          <Route path="/home/index">
-            <ContentRender {...obj}></ContentRender>
-            <ContentRender {...obj}></ContentRender>
-            <ContentRender {...obj}></ContentRender>
-            <ContentRender {...obj}></ContentRender>
-            <ContentRender {...obj}></ContentRender>
-          </Route>
-          <Route path="/home/article">
-            <Article {...this.props}></Article>
-          </Route>
-          <Route path="/home" exact>
-            <Redirect to="/home/index"></Redirect>
-          </Route>
-          <Route path="/home">
-            <div ref={this.empty}>
-              <Empty description="您所访问的页面不存在,将在3s内返回"></Empty>
-            </div>
-          </Route>
-        </Switch>
+        {/* loading */}
+        <div ref={this.loading}>
+          <Loading
+            {...{
+              percent: this.state.progress.percent,
+              status: this.state.progress.status
+            }}
+          />
+        </div>
+        {/* router */}
+        <ScrollToTop>
+          <Switch>
+            {/*首页文章渲染*/}
+            <Route path="/home/index" exact>
+              {/* 正文 */}
+              {this.state.data.map((item, index) => {
+                return (
+                  <ContentRender
+                    {...item}
+                    key={item.title + index}
+                  ></ContentRender>
+                )
+              })}
+              {/* 分页 */}
+              <Pagination
+                showQuickJumper
+                defaultCurrent={1}
+                total={500}
+                onChange={this.onChange}
+                className="Pagination"
+              />
+              <Foot></Foot>
+            </Route>
+            {/*文章详情页路由分配*/}
+            {this.state.data.map((item) => {
+              return (
+                <Route path={item.content.href} exact key={item.title}>
+                  <Article {...this.props}></Article>
+                </Route>
+              )
+            })}
+
+            {/* 默认进入首页 */}
+            <Route path="/home" exact>
+              <Redirect to="/home/index"></Redirect>
+            </Route>
+            {/*错误的url重定向*/}
+            <Route>
+              <NotFound></NotFound>
+            </Route>
+          </Switch>
+        </ScrollToTop>
       </>
     )
   }
   componentDidMount() {
-    let empty = this.empty.current
-    if (empty) {
-      setTimeout(() => {
-        this.props.history.replace('/home')
-      }, 3000)
+    //组件挂载完成后
+    document.title =
+      '晚来风急|web前端-技术分享博客-javascript、vue、react、html、css'
+    this.getData(1)
+  }
+
+  onChange = (pageNumber: number) => {
+    this.getData(pageNumber)
+  }
+  //发请求渲染数据 同时处理 进度条
+  getData = (page: number = 1, limit: number = 7) => {
+    let loading = this.loading.current
+    if (loading) {
+      loading.style.display = 'block'
     }
+    this.setState(
+      {
+        progress: {
+          percent: 30,
+          status: 'active'
+        }
+      },
+      () => {
+        axios({
+          url: '/article/data',
+          method: 'POST',
+          data: {
+            limit: limit,
+            page: page
+          }
+        })
+          .then((res: any) => {
+            if (res.code === 200) {
+              let temp: any = []
+              this.setState(
+                {
+                  progress: {
+                    percent: 80,
+                    status: 'success'
+                  }
+                },
+                () => {
+                  res.item.forEach((item: any) => {
+                    temp.push({
+                      title: item.articleTitle,
+                      IconTitle: {
+                        tag: item.articleTag,
+                        tagColor: item.articleTagColor,
+                        calendar: item.articleDate,
+                        folder: item.columns_docs[0].columnName,
+                        fire: item.articleFire
+                      },
+                      content: {
+                        details: item.articleDesp,
+                        href: `/home/${item.columns_docs[0].columnName}_${item.articleTitle}`
+                      }
+                    })
+                  })
+                  this.setState(
+                    {
+                      data: temp
+                    },
+                    () => {
+                      if (loading) {
+                        loading.style.display = 'none'
+                      }
+                      if (temp.length === 0) {
+                        this.props.history.replace('/home/noData')
+                      }
+                    }
+                  )
+                }
+              )
+            } else {
+              this.setState(
+                {
+                  progress: {
+                    percent: 70,
+                    status: 'exception'
+                  }
+                },
+                () => {
+                  this.props.history.replace('/notFound')
+                }
+              )
+            }
+          })
+          .catch((err: any) => {
+            this.setState(
+              {
+                progress: {
+                  percent: 70,
+                  status: 'exception'
+                }
+              },
+              () => {
+                this.props.history.replace('/home/notFound')
+                throw err
+              }
+            )
+          })
+      }
+    )
   }
 }

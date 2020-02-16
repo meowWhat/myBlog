@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react'
+import React, { PureComponent, createRef } from 'react'
 
 //@router
 import { RouteComponentProps } from 'react-router-dom'
@@ -6,18 +6,20 @@ import { RouteComponentProps } from 'react-router-dom'
 //@antd
 import { Divider } from 'antd'
 //@components
-import { MessageBox, AricleCommt } from '../index'
+import { MessageBox } from '../index'
 //@less
 import './ArticleRender.less'
 //@img
 import airpay from '../../basic/img/airpay.jpg'
 import wechat from '../../basic/img/wechat.png'
+
 //@marked + hljs
 import marked from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark.css'
 
 //@init marked
+
 marked.setOptions({
   highlight: function(code) {
     return hljs.highlightAuto(code).value
@@ -25,16 +27,20 @@ marked.setOptions({
 })
 
 //@interface
-interface Props {
+interface Content {
   title: string
   fire: number
   date: string
-  article: string
+  article: any
+  callBack: () => void
+}
+interface Props {
+  content: Content
   props: RouteComponentProps
 }
 
 //@class
-export default class ArticleRender extends Component<Props> {
+export default class ArticleRender extends PureComponent<Props> {
   article: React.RefObject<HTMLDivElement>
   constructor(props: Props) {
     super(props)
@@ -44,9 +50,9 @@ export default class ArticleRender extends Component<Props> {
     return (
       <div className="articleContent">
         {/* context */}
-        <h1 className="articleContentHead blue">{this.props.title}</h1>
+        <h1 className="articleContentHead blue">{this.props.content.title}</h1>
         <div className="articleContentTag gray">
-          {this.props.date}&nbsp;阅读&nbsp;{this.props.fire}
+          {this.props.content.date}&nbsp;阅读&nbsp;{this.props.content.fire}
         </div>
         <div ref={this.article} className="articleContentCompiler"></div>
         {/* support */}
@@ -69,15 +75,19 @@ export default class ArticleRender extends Component<Props> {
           </h3>
           <h3>"那样他将会更加开心"</h3>
         </div>
-        {/* comment */}
-        <AricleCommt></AricleCommt>
       </div>
     )
   }
   componentDidMount() {
+    this.goMarked()
+    //在这里 再去渲染 评论
+    this.props.content.callBack()
+  }
+
+  goMarked = () => {
     let dom = this.article.current
-    if (dom && this.props.article) {
-      dom.innerHTML = marked(this.props.article)
+    if (dom && this.props.content.article) {
+      dom.innerHTML = marked(this.props.content.article)
     } else {
       this.props.props.history.replace('/home')
     }

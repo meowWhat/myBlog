@@ -4,10 +4,18 @@ import TabCommend from './TabCommend/TabCommend'
 import TabColumn from './TabColumn/TabColumn'
 import TabStudyMap from './TabStudyMap/TabStudyMap'
 //@antd
-import { Tabs } from 'antd'
+import { Tabs, Skeleton } from 'antd'
 
 const { TabPane } = Tabs
-export default class ProfileTabs extends Component {
+interface State {
+  flag: boolean
+  display: string
+}
+export default class ProfileTabs extends Component<{}, State> {
+  state = {
+    flag: true,
+    display: 'none'
+  }
   render() {
     return (
       <Tabs defaultActiveKey="1">
@@ -15,12 +23,21 @@ export default class ProfileTabs extends Component {
           <TabCommend />
         </TabPane>
         <TabPane tab="专栏" key="2">
-          <TabColumn />
+          {this.state.flag ? <Skeleton active /> : null}
+          <div style={{ display: this.state.display }}>
+            <TabColumn columnLoading={this.columnLoading} />
+          </div>
         </TabPane>
         <TabPane tab="学习路线" key="3">
           <TabStudyMap />
         </TabPane>
       </Tabs>
     )
+  }
+  columnLoading = () => {
+    this.setState({
+      flag: false,
+      display: 'block'
+    })
   }
 }

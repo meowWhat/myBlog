@@ -1,4 +1,26 @@
 .TabCommend {
   margin-top: -30px;
   padding: 15px;
+  .ant-list-item:nth-child(2n + 1) {
+    a {
+      color: #f26b3a;
+    }
+  }
+  .ant-list-item:nth-child(2n) {
+    a {
+      color: #80d455;
+    }
+  }
+  .ant-list-item:hover {
+    a {
+      color: #04c0f3;
+      // color: #f26b3a;
+    }
+  }
+  .ant-list-item-meta-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
 }
