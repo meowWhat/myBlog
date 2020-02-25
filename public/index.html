@@ -20,5 +20,29 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      if (
+        /AppleWebKit.*Mobile/i.test(navigator.userAgent) ||
+        /MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(
+          navigator.userAgent
+        )
+      ) {
+        if (window.location.href.indexOf('?mobile') < 0) {
+          try {
+            if (
+              /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)
+            ) {
+              //手机
+              window.location.href = 'http://47.103.98.84:3232/'
+            } else if (/iPad/i.test(navigator.userAgent)) {
+              //ipad
+              window.location.href = 'http://47.103.98.84:3232/'
+            } else {
+              console.log('asd')
+            }
+          } catch (e) {}
+        }
+      }
+    </script>
   </body>
 </html>

@@ -147,7 +147,7 @@ export default class TanColumn extends Component<Props, State> {
               temp.push({
                 articleTitle: ele.articleTitle,
                 articleTagColor: ele.articleTagColor,
-                href: `/home/${res.item[0].columnName}_${ele.articleTitle}`
+                href: `/home/aricle/${res.item[0].columnName}_${ele.articleTitle}`
               })
             })
             this.setState({

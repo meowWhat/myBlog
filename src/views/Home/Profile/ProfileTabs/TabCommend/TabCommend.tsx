@@ -43,7 +43,7 @@ export default class TabCommend extends Component<Props, State> {
           res.data.forEach((ele: any) => {
             tempData.push({
               title: ele[0].articleTitle,
-              href: `/home/${ele[0].columns_docs[0].columnName}_${ele[0].articleTitle}`,
+              href: `/home/aricle/${ele[0].columns_docs[0].columnName}_${ele[0].articleTitle}`,
               desp: ele[0].articleDesp
             })
           })

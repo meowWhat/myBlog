@@ -2,9 +2,16 @@
 @navFontSize: 18px;
 @navFontColor: #999999;
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 1100px) {
   .navControl {
     display: none !important;
+  }
+  .navIcon {
+    img {
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }
 

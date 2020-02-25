@@ -11,6 +11,9 @@ interface Props {
   showDrawer: (a: string) => void | undefined
 }
 export default class TabRender extends Component<Props> {
+  click = (href: string) => {
+    window.location.href = `http://www.jiahao.site${href}`
+  }
   render() {
     return (
       <List
@@ -23,7 +26,11 @@ export default class TabRender extends Component<Props> {
             style={{ cursor: 'pointer' }}
           >
             <List.Item.Meta
-              title={<Link to={item.href}> {item.title} </Link>}
+              title={
+                <Link to="#" onClick={() => this.click(item.href)}>
+                  {item.title}
+                </Link>
+              }
               description={item.desp}
             />
           </List.Item>

@@ -111,7 +111,7 @@ export default class Content extends PureComponent<Props, State> {
             {/*文章详情页路由分配*/}
             {this.state.data.map((item) => {
               return (
-                <Route path={item.content.href} exact key={item.title}>
+                <Route path="/home/aricle" key={item.title}>
                   <Article {...this.props}></Article>
                 </Route>
               )
@@ -185,7 +185,7 @@ export default class Content extends PureComponent<Props, State> {
                       },
                       content: {
                         details: item.articleDesp,
-                        href: `/home/${item.columns_docs[0].columnName}_${item.articleTitle}`
+                        href: `/home/aricle/${item.columns_docs[0].columnName}_${item.articleTitle}`
                       }
                     })
                   })
